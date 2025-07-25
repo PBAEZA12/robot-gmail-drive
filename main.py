@@ -23,7 +23,7 @@ EMAIL_SUBJECT_PART_2 = '10228.DAT'
 
 # Ruta donde Render guardará el archivo JSON de credenciales de forma segura
 # Debes nombrar tu archivo secreto "client_secret.json" en el dashboard de Render.
-GOOGLE_CREDENTIALS_PATH = '/etc/secrets/client_secret.json'
+GOOGLE_CREDENTIALS_PATH = 'clientsecret.json'
 
 def run_process():
     """Función principal con la lógica de búsqueda, extracción y subida a Drive."""
