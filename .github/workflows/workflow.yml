@@ -30,11 +30,10 @@ jobs:
           echo "${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET_B64 }}" | base64 -d > client_secret.json
           echo "${{ secrets.GOOGLE_OAUTH_TOKEN_B64 }}" | base64 -d > token.json
 
-      - name: Exportar variables de entorno desde secretos
-        run: echo "Variables de entorno exportadas."
+      - name: Ejecutar main.py
+        run: python main.py
         env:
           DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
           ZIP_PASSWORD: ${{ secrets.ZIP_PASSWORD }}
-
-      - name: Ejecutar main.py
-        run: python main.py
+          GOOGLE_OAUTH_CLIENT_SECRET: client_secret.json
+          GOOGLE_OAUTH_TOKEN: token.json

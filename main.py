@@ -19,9 +19,11 @@ EMAIL_SUBJECT_PART_2 = '10228.DAT'
 TEXT_TO_FIND_IN_BODY = 'ReportesEmisores@dcv.cl'
 DRIVE_FOLDER_ID = os.environ.get('DRIVE_FOLDER_ID')
 
-# Por defecto busca los archivos en la raíz del proyecto
-GOOGLE_CREDENTIALS_PATH = os.environ.get('GOOGLE_CREDENTIALS_PATH', 'client_secret.json')
-TOKEN_PATH = os.environ.get('TOKEN_PATH', 'token.json')
+# Permite usar variables de entorno personalizadas para las rutas de credenciales
+GOOGLE_CREDENTIALS_PATH = os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET',
+    os.environ.get('GOOGLE_CREDENTIALS_PATH', 'client_secret.json'))
+TOKEN_PATH = os.environ.get('GOOGLE_OAUTH_TOKEN',
+    os.environ.get('TOKEN_PATH', 'token.json'))
 
 def run_process():
     """Función principal con la lógica de búsqueda, extracción y subida a Drive."""
@@ -35,7 +37,7 @@ def run_process():
     zip_password_bytes = zip_password_str.encode('utf-8')
 
     try:
-        # --- AUTENTICACIÓN CON OAUTH2 (usuario, refresh token) ---
+        # --- AUTENTIFICACIÓN CON OAUTH2 (usuario, refresh token) ---
         print("Autenticando con OAuth2 de usuario...")
         creds = None
         if os.path.exists(TOKEN_PATH):
