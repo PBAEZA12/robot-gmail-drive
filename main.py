@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import base64
 import io
 import os
@@ -13,7 +12,6 @@ from google.auth.transport.requests import Request
 import google.auth.exceptions
 import pickle
 
-load_dotenv()
 # --- CONFIGURACIÓN ---
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/drive']
 EMAIL_SUBJECT_PART_1 = 'DCV - Archivo RVCA'
