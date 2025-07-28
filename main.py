@@ -50,7 +50,9 @@ def run_process():
         # --- BÚSQUEDA MODIFICADA ---
         subject_to_find = f"{EMAIL_SUBJECT_PART_1}{date_str}{EMAIL_SUBJECT_PART_2}"
         # Se quitó "from:" y se añadió el texto a buscar en el cuerpo del correo
-        query = f'subject:("{subject_to_find}") "{TEXT_TO_FIND_IN_BODY}" has:attachment'
+        # query = f'subject:("{subject_to_find}") "{TEXT_TO_FIND_IN_BODY}" has:attachment'
+        # LÍNEA NUEVA PARA LA PRUEBA
+        query = 'has:attachment'
         
         print(f"Buscando correo con la consulta: {query}")
 
