@@ -2,6 +2,9 @@
 name: Ejecutar main.py
 
 on:
+  # Corre automáticamente de martes a sábado a las 05:00 UTC
+  schedule:
+    - cron: '0 5 * * 2-6'
   workflow_dispatch:
 
 jobs:

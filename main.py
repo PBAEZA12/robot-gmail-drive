@@ -17,7 +17,7 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googlea
 EMAIL_SUBJECT_PART_1 = 'DCV - Archivo RVCA'
 EMAIL_SUBJECT_PART_2 = '10228.DAT'
 TEXT_TO_FIND_IN_BODY = 'ReportesEmisores@dcv.cl'
-DRIVE_FOLDER_ID = os.environ.get('DRIVE_FOLDER_ID', '1pWkAErjDtUqCq8CBaAJEzGbSlPKNXz9C')
+DRIVE_FOLDER_ID = os.environ.get('DRIVE_FOLDER_ID')
 
 # Por defecto busca los archivos en la raíz del proyecto
 GOOGLE_CREDENTIALS_PATH = os.environ.get('GOOGLE_CREDENTIALS_PATH', 'client_secret.json')
@@ -27,7 +27,7 @@ def run_process():
     """Función principal con la lógica de búsqueda, extracción y subida a Drive."""
     print("--- Iniciando ejecución del proceso ---")
 
-    zip_password_str = os.environ.get('ZIP_PASSWORD', '76917333')
+    zip_password_str = os.environ.get('ZIP_PASSWORD')
     if not zip_password_str:
         print("Error: La variable de entorno 'ZIP_PASSWORD' no está configurada.")
         return "Error: ZIP_PASSWORD no configurada."
@@ -69,7 +69,7 @@ def run_process():
 
         # --- CÁLCULO DE FECHA ---
         santiago_tz = pytz.timezone('America/Santiago')
-        search_date = datetime.now(santiago_tz) - timedelta(days=3)
+        search_date = datetime.now(santiago_tz) - timedelta(days=1)
         date_str = search_date.strftime('%y%m%d')
         print(f"La fecha calculada para la búsqueda es: {date_str}")
         
@@ -136,9 +136,4 @@ def run_process():
         raise e
 
 if __name__ == '__main__':
-    santiago_tz = pytz.timezone('America/Santiago')
-    today = datetime.now(santiago_tz)
-    if today.weekday() >= 5:  # 5 = sábado, 6 = domingo
-        print("Hoy es fin de semana (sábado o domingo). El proceso no se ejecuta.")
-    else:
-        run_process()
+    run_process()
