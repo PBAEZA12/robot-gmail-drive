@@ -19,8 +19,9 @@ EMAIL_SUBJECT_PART_2 = '10228.DAT'
 TEXT_TO_FIND_IN_BODY = 'ReportesEmisores@dcv.cl'
 DRIVE_FOLDER_ID = os.environ.get('DRIVE_FOLDER_ID', '1pWkAErjDtUqCq8CBaAJEzGbSlPKNXz9C')
 
-GOOGLE_CREDENTIALS_PATH = os.environ.get('GOOGLE_CREDENTIALS_PATH', 'credenciales/client_secret.json')
-TOKEN_PATH = os.environ.get('TOKEN_PATH', 'credenciales/token.json')
+# Por defecto busca los archivos en la raíz del proyecto
+GOOGLE_CREDENTIALS_PATH = os.environ.get('GOOGLE_CREDENTIALS_PATH', 'client_secret.json')
+TOKEN_PATH = os.environ.get('TOKEN_PATH', 'token.json')
 
 def run_process():
     """Función principal con la lógica de búsqueda, extracción y subida a Drive."""
