@@ -69,7 +69,7 @@ def run_process():
 
         # --- CÁLCULO DE FECHA ---
         santiago_tz = pytz.timezone('America/Santiago')
-        search_date = datetime.now(santiago_tz) - timedelta(days=1)
+        search_date = datetime.now(santiago_tz) - timedelta(days=3)
         date_str = search_date.strftime('%y%m%d')
         print(f"La fecha calculada para la búsqueda es: {date_str}")
         
