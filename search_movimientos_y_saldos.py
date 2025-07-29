@@ -115,8 +115,8 @@ def run_process():
         # Obtener el mensaje completo para buscar el adjunto
         m = gmail_service.users().messages().get(userId='me', id=filtered_msg_id).execute()
         import re
-        # El patrón ahora es EMAIL_SUBJECT_PART_2 + fecha + 4 dígitos + .txt
-        pattern_str = rf'^{re.escape(EMAIL_SUBJECT_PART_2)}{date_str}\d{{4}}\.txt$'
+        # El patrón ahora es EMAIL_SUBJECT_PART_2 + fecha + 4 dígitos + .zip
+        pattern_str = rf'^{re.escape(EMAIL_SUBJECT_PART_2)}{date_str}\d{{4}}\.zip$'
         pattern = re.compile(pattern_str, re.IGNORECASE)
         msg_id = filtered_msg_id
         attachment_id = None
@@ -130,8 +130,8 @@ def run_process():
                     break
 
         if not attachment_id:
-            print("No se encontró un adjunto .TXT con formato nnnn.txt en el correo filtrado.")
-            return "No se encontró un adjunto .TXT válido."
+            print("No se encontró un adjunto .ZIP con formato nnnn.zip en el correo filtrado.")
+            return "No se encontró un adjunto .ZIP válido."
 
         print(f"Adjunto encontrado: {source_txt_name}. Descargando...")
         attachment = gmail_service.users().messages().attachments().get(userId='me', messageId=msg_id, id=attachment_id).execute()
