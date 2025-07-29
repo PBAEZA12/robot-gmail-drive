@@ -78,9 +78,10 @@ def run_process():
 
         # --- BÚSQUEDA MODIFICADA ---
 
-        subject_to_find = f"{EMAIL_SUBJECT_PART_1} {EMAIL_SUBJECT_PART_2}{date_str}"
-        # Buscar correos cuyo asunto contenga el patrón base + fecha, aunque tenga texto adicional
-        query = f'subject:("{subject_to_find}") has:attachment'
+        # Buscar correos cuyo asunto contenga ambas partes clave, aunque tenga texto antes, entre o después
+        subject_key1 = EMAIL_SUBJECT_PART_1
+        subject_key2 = f"{EMAIL_SUBJECT_PART_2}{date_str}"
+        query = f'subject:("{subject_key1}") subject:("{subject_key2}") has:attachment'
 
         print(f"Buscando correo con la consulta: {query}")
 
