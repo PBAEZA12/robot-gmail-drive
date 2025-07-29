@@ -76,44 +76,29 @@ def run_process():
         date_str = search_date.strftime('%Y%m%d')
         print(f"La fecha calculada para la búsqueda es: {date_str}")
 
-        # --- BÚSQUEDA MODIFICADA ---
-
-        # Buscar correos cuyo asunto contenga ambas partes clave, aunque tenga texto antes, entre o después
+        # --- BÚSQUEDA PARCIAL Y DEPURACIÓN ---
+        # Buscar correos cuyo asunto contenga la parte fija y tengan adjunto
         subject_key1 = EMAIL_SUBJECT_PART_1
-        subject_key2 = f"{EMAIL_SUBJECT_PART_2}{date_str}"
-        query = f'subject:("{subject_key1}") subject:("{subject_key2}") has:attachment'
-
+        query = f'subject:("{subject_key1}") has:attachment'
         print(f"Buscando correo con la consulta: {query}")
 
-        results = gmail_service.users().messages().list(userId='me', q=query, maxResults=1).execute()
+        results = gmail_service.users().messages().list(userId='me', q=query, maxResults=5).execute()
         messages = results.get('messages', [])
 
         if not messages:
             print("Resultado: No se encontró ningún correo que coincida.")
             return "No se encontró el correo."
 
-        msg_id = None
-        attachment_id = None
-        source_txt_name = None
-        import re
-        # El patrón ahora es EMAIL_SUBJECT_PART_2 + fecha + 4 dígitos + .txt
-        pattern_str = rf'^{re.escape(EMAIL_SUBJECT_PART_2)}{date_str}\d{{4}}\.txt$'
-        pattern = re.compile(pattern_str, re.IGNORECASE)
+        print("\n--- DEPURACIÓN: Primeros 5 correos encontrados ---")
+        for idx, msg in enumerate(messages, 1):
+            m = gmail_service.users().messages().get(userId='me', id=msg['id'], format='metadata', metadataHeaders=['Subject','Date']).execute()
+            headers = m.get('payload', {}).get('headers', [])
+            subject = next((h['value'] for h in headers if h['name'] == 'Subject'), '(sin asunto)')
+            date = next((h['value'] for h in headers if h['name'] == 'Date'), '(sin fecha)')
+            print(f"Correo {idx}: Asunto: {subject} | Fecha: {date}")
+        print("--- Fin depuración ---\n")
 
-        # Buscar el mensaje y adjunto que cumpla con el patrón
-        for msg in messages:
-            m = gmail_service.users().messages().get(userId='me', id=msg['id']).execute()
-            for part in m['payload'].get('parts', []):
-                filename = part.get('filename', '')
-                if pattern.match(filename):
-                    if part.get('body') and part['body'].get('attachmentId'):
-                        msg_id = msg['id']
-                        message = m
-                        attachment_id = part['body']['attachmentId']
-                        source_txt_name = filename
-                        break
-            if msg_id:
-                break
+        # Aquí puedes continuar con la lógica de filtrado y procesamiento si lo deseas
 
         if not attachment_id:
             print("No se encontró un adjunto .TXT con formato nnnn.txt en los correos.")
