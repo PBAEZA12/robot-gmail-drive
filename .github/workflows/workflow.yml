@@ -33,7 +33,8 @@ jobs:
       - name: Ejecutar main.py
         run: python main.py
         env:
-          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+          DRIVE_FOLDER_ID_MOVIMIENTOS_Y_SALDOS: ${{ secrets.DRIVE_FOLDER_ID_MOVIMIENTOS_Y_SALDOS }}
+          DRIVE_FOLDER_ID_CUSTODIA_INSTRUMENTOS: ${{ secrets.DRIVE_FOLDER_ID_CUSTODIA_INSTRUMENTOS }}
           ZIP_PASSWORD: ${{ secrets.ZIP_PASSWORD }}
           GOOGLE_OAUTH_CLIENT_SECRET: client_secret.json
           GOOGLE_OAUTH_TOKEN: token.json
