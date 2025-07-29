@@ -89,19 +89,48 @@ def run_process():
             print("Resultado: No se encontró ningún correo que coincida.")
             return "No se encontró el correo."
 
+
         print("\n--- DEPURACIÓN: Primeros 5 correos encontrados ---")
+
+        filtro = f"{EMAIL_SUBJECT_PART_2}{date_str}".lower()
+        filtered_msg = None
+        filtered_msg_id = None
         for idx, msg in enumerate(messages, 1):
             m = gmail_service.users().messages().get(userId='me', id=msg['id'], format='metadata', metadataHeaders=['Subject','Date']).execute()
             headers = m.get('payload', {}).get('headers', [])
             subject = next((h['value'] for h in headers if h['name'] == 'Subject'), '(sin asunto)')
             date = next((h['value'] for h in headers if h['name'] == 'Date'), '(sin fecha)')
             print(f"Correo {idx}: Asunto: {subject} | Fecha: {date}")
+            subj_norm = subject.replace(' ', '').lower()
+            if filtro in subj_norm and subj_norm.endswith('.txt'):
+                filtered_msg = msg
+                filtered_msg_id = msg['id']
+                break
         print("--- Fin depuración ---\n")
 
-        # Aquí puedes continuar con la lógica de filtrado y procesamiento si lo deseas
+        if not filtered_msg:
+            print("No se encontró un correo cuyo asunto contenga el código y la fecha esperada y termine en .txt.")
+            return "No se encontró el correo esperado."
+
+        # Obtener el mensaje completo para buscar el adjunto
+        m = gmail_service.users().messages().get(userId='me', id=filtered_msg_id).execute()
+        import re
+        # El patrón ahora es EMAIL_SUBJECT_PART_2 + fecha + 4 dígitos + .txt
+        pattern_str = rf'^{re.escape(EMAIL_SUBJECT_PART_2)}{date_str}\d{{4}}\.txt$'
+        pattern = re.compile(pattern_str, re.IGNORECASE)
+        msg_id = filtered_msg_id
+        attachment_id = None
+        source_txt_name = None
+        for part in m['payload'].get('parts', []):
+            filename = part.get('filename', '')
+            if pattern.match(filename):
+                if part.get('body') and part['body'].get('attachmentId'):
+                    attachment_id = part['body']['attachmentId']
+                    source_txt_name = filename
+                    break
 
         if not attachment_id:
-            print("No se encontró un adjunto .TXT con formato nnnn.txt en los correos.")
+            print("No se encontró un adjunto .TXT con formato nnnn.txt en el correo filtrado.")
             return "No se encontró un adjunto .TXT válido."
 
         print(f"Adjunto encontrado: {source_txt_name}. Descargando...")
