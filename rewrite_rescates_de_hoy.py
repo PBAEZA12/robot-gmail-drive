@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
                 # Eliminar las dos primeras columnas y volver a guardar
                 df_mod = pd.read_excel(local_path_mod, engine='openpyxl')
-                df_mod = df_mod.iloc[:, 2:]
+                df_mod = df_mod.iloc[2:, :]
                 df_mod.to_excel(local_path_mod, index=False)
 
                 # Subir el archivo modificado (sobrescribir)
@@ -203,7 +203,7 @@ if __name__ == '__main__':
 
                 # Eliminar las dos primeras columnas y volver a guardar
                 df_mod = pd.read_excel(local_path_mod, engine='openpyxl')
-                df_mod = df_mod.iloc[:, 2:]
+                df_mod = df_mod.iloc[2:, :]
                 df_mod.to_excel(local_path_mod, index=False)
 
                 # Subir el archivo modificado (sobrescribir)
