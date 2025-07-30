@@ -140,7 +140,9 @@ if __name__ == '__main__':
             fh.close()
 
             # Leer los datos del archivo descargado
-            df = pd.read_excel(local_path, engine='openpyxl' if local_path.endswith('.xlsx') else None)
+            # Leer solo los datos desde la fila 3 (A3) del archivo descargado
+            df = pd.read_excel(local_path, engine='openpyxl' if local_path.endswith('.xlsx') else None, header=None)
+            df = df.iloc[2:, :].reset_index(drop=True)
 
             # Buscar si existe 'Rescates de hoy T-Habil.xlsx' en la carpeta
             habil_filename = 'Rescates de hoy T-Habil.xlsx'
