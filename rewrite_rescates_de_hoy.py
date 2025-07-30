@@ -160,7 +160,6 @@ if __name__ == '__main__':
                 # Actualizar el archivo existente
                 service.files().update(fileId=habil_file['id'], media_body=media).execute()
                 print(f"Archivo '{habil_filename}' sobreescrito en Drive.")
-
             else:
                 # Crear el archivo
                 file_metadata = {
