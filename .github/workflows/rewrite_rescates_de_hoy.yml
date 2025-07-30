@@ -4,8 +4,6 @@ description: Ejecuta el script de backend para actualizar el archivo 'Rescates d
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 13 * * 1-5'  # Lunes a viernes a las 13:00 UTC
 
 jobs:
   run-script:

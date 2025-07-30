@@ -13,3 +13,4 @@ def run_script(script_name):
 if __name__ == "__main__":
     run_script("search_custodia_instrumentos.py")
     run_script("search_movimientos_y_saldos.py")
+    run_script("rewrite_rescates_de_hoy.py")
