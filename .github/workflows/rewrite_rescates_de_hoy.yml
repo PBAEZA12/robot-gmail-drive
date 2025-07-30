@@ -1,40 +1,36 @@
+name: Rewrite Rescates de Hoy
 
-name: Ejecutar main.py
+description: Ejecuta el script de backend para actualizar el archivo 'Rescates de hoy T-Habil.xlsx' en Google Drive usando los datos del archivo más reciente.
 
 on:
-  # Corre automáticamente de martes a sábado a las 05:00 UTC
-  schedule:
-    - cron: '0 5 * * 2-6'
   workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'  # Todos los días a las 7:00 UTC
 
 jobs:
-  run-main:
+  run-script:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
 
       - name: Crear archivos OAuth (decodificar base64)
         run: |
           echo "${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET_B64 }}" | base64 -d > client_secret.json
           echo "${{ secrets.GOOGLE_OAUTH_TOKEN_B64 }}" | base64 -d > token.json
 
-      - name: Ejecutar main.py
-        run: python main.py
+      - name: Ejecutar rewrite_rescates_de_hoy.py
+        run: python rewrite_rescates_de_hoy.py
         env:
-          DRIVE_FOLDER_ID_MOVIMIENTOS_Y_SALDOS: ${{ secrets.DRIVE_FOLDER_ID_MOVIMIENTOS_Y_SALDOS }}
-          DRIVE_FOLDER_ID_CUSTODIA_INSTRUMENTOS: ${{ secrets.DRIVE_FOLDER_ID_CUSTODIA_INSTRUMENTOS }}
-          ZIP_PASSWORD: ${{ secrets.ZIP_PASSWORD }}
           GOOGLE_OAUTH_CLIENT_SECRET: client_secret.json
           GOOGLE_OAUTH_TOKEN: token.json
