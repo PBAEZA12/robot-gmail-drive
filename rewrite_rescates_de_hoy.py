@@ -12,6 +12,7 @@ import pandas as pd
 from googleapiclient.http import MediaIoBaseDownload
 import io
 from google.auth.transport.requests import Request
+import pickle
 
 # If modifying these SCOPES, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -24,7 +25,8 @@ def authenticate_drive():
     creds = None
     if os.path.exists(TOKEN_PATH):
         try:
-            creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
+            with open(TOKEN_PATH, 'rb') as token:
+                creds = pickle.load(token)
         except Exception as token_error:
             print(f"Advertencia: No se pudo cargar el token existente ({token_error}). Se eliminará y se generará uno nuevo.")
             try:
@@ -39,8 +41,8 @@ def authenticate_drive():
             flow = InstalledAppFlow.from_client_secrets_file(
                 GOOGLE_CREDENTIALS_PATH, SCOPES)
             creds = flow.run_local_server(port=0)
-        with open(TOKEN_PATH, 'w') as token:
-            token.write(creds.to_json())
+        with open(TOKEN_PATH, 'wb') as token:
+            pickle.dump(creds, token)
     return creds
 
 def list_files_in_folder(service, folder_id):
