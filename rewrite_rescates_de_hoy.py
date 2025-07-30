@@ -23,9 +23,15 @@ TOKEN_PATH = os.environ.get('GOOGLE_OAUTH_TOKEN', os.environ.get('TOKEN_PATH', o
 def authenticate_drive():
     creds = None
     if os.path.exists(TOKEN_PATH):
-        creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
-    else:
-        creds = None
+        try:
+            creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
+        except Exception as token_error:
+            print(f"Advertencia: No se pudo cargar el token existente ({token_error}). Se eliminará y se generará uno nuevo.")
+            try:
+                os.remove(TOKEN_PATH)
+            except Exception as remove_error:
+                print(f"No se pudo eliminar el token corrupto: {remove_error}")
+            creds = None
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
