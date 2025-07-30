@@ -1,5 +1,6 @@
-
-
+import pytz
+from datetime import timedelta
+import holidays
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -45,6 +46,24 @@ def authenticate_drive():
             pickle.dump(creds, token)
     return creds
 
+def obtener_ultimo_dia_habil_chile(sin_incluir_fecha=None):
+    """
+    Retorna el último día hábil en Chile (lunes a viernes, sin contar hoy ni feriados nacionales).
+    Si sin_incluir_fecha es None, se usa la fecha actual de Chile.
+    """
+    tz = pytz.timezone('America/Santiago')
+    if sin_incluir_fecha is None:
+        hoy = datetime.now(tz).date()
+    else:
+        hoy = sin_incluir_fecha
+    cl_holidays = holidays.country_holidays('CL', years=hoy.year)
+    dia = hoy - timedelta(days=1)
+    while True:
+        # Lunes=0, Domingo=6
+        if dia.weekday() < 5 and dia not in cl_holidays:
+            return dia
+        dia -= timedelta(days=1)
+
 def list_files_in_folder(service, folder_id):
     query = f"'{folder_id}' in parents and trashed = false"
     results = service.files().list(q=query, fields="files(id, name, mimeType)").execute()
@@ -81,17 +100,27 @@ if __name__ == '__main__':
         m = patron.fullmatch(a['name'])
         if m and a.get('mimeType') in mimetypes_validos:
             try:
-                fecha = datetime.strptime(m.group(1), "%d-%m-%Y")
+                fecha = datetime.strptime(m.group(1), "%d-%m-%Y").date()
                 archivos_fecha.append((fecha, a))
             except ValueError:
                 pass
 
     if archivos_fecha:
-        archivos_fecha.sort(reverse=True)  # Más reciente primero
-        fecha_reciente, archivo_reciente = archivos_fecha[0]
-        print(f"El archivo más reciente es: {archivo_reciente['name']}")
+        # Buscar el archivo cuyo nombre corresponde al último día hábil en Chile (sin contar hoy)
+        ultimo_habil = obtener_ultimo_dia_habil_chile()
+        archivo_reciente = None
+        fecha_reciente = None
+        for fecha, a in archivos_fecha:
+            if fecha == ultimo_habil:
+                archivo_reciente = a
+                fecha_reciente = fecha
+                break
+        if archivo_reciente is None:
+            print(f"No se encontró archivo para el último día hábil en Chile: {ultimo_habil.strftime('%d-%m-%Y')}")
+        else:
+            print(f"El archivo más reciente es: {archivo_reciente['name']}")
 
-        # Descargar el archivo más reciente a un directorio temporal
+            # Descargar el archivo más reciente a un directorio temporal
         with tempfile.TemporaryDirectory() as tmpdirname:
             file_id = archivo_reciente['id']
             file_name = archivo_reciente['name']
