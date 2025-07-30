@@ -151,10 +151,6 @@ if __name__ == '__main__':
                     break
 
             # Guardar los datos en un nuevo archivo Excel temporal
-
-            # Eliminar la fila 1 y 2 (índices 0 y 1)
-            df = df.iloc[2:, :]
-
             habil_local_path = os.path.join(tmpdirname, habil_filename)
             df.to_excel(habil_local_path, index=False)
 
