@@ -161,25 +161,6 @@ if __name__ == '__main__':
                 service.files().update(fileId=habil_file['id'], media_body=media).execute()
                 print(f"Archivo '{habil_filename}' sobreescrito en Drive.")
 
-                # Descargar el archivo actualizado para eliminar las dos primeras columnas
-                request = service.files().get_media(fileId=habil_file['id'])
-                local_path_mod = os.path.join(tmpdirname, 'mod_' + habil_filename)
-                fh_mod = io.FileIO(local_path_mod, 'wb')
-                downloader_mod = MediaIoBaseDownload(fh_mod, request)
-                done_mod = False
-                while not done_mod:
-                    status, done_mod = downloader_mod.next_chunk()
-                fh_mod.close()
-
-                # Eliminar las dos primeras columnas y volver a guardar
-                df_mod = pd.read_excel(local_path_mod, engine='openpyxl')
-                df_mod = df_mod.iloc[2:, :]
-                df_mod.to_excel(local_path_mod, index=False)
-
-                # Subir el archivo modificado (sobrescribir)
-                media_mod = MediaFileUpload(local_path_mod, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-                service.files().update(fileId=habil_file['id'], media_body=media_mod).execute()
-                print(f"Archivo '{habil_filename}' actualizado sin las dos primeras columnas.")
             else:
                 # Crear el archivo
                 file_metadata = {
@@ -190,26 +171,6 @@ if __name__ == '__main__':
                 created = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
                 print(f"Archivo '{habil_filename}' creado en Drive.")
 
-                # Descargar el archivo creado para eliminar las dos primeras columnas
-                new_file_id = created['id']
-                request = service.files().get_media(fileId=new_file_id)
-                local_path_mod = os.path.join(tmpdirname, 'mod_' + habil_filename)
-                fh_mod = io.FileIO(local_path_mod, 'wb')
-                downloader_mod = MediaIoBaseDownload(fh_mod, request)
-                done_mod = False
-                while not done_mod:
-                    status, done_mod = downloader_mod.next_chunk()
-                fh_mod.close()
-
-                # Eliminar las dos primeras columnas y volver a guardar
-                df_mod = pd.read_excel(local_path_mod, engine='openpyxl')
-                df_mod = df_mod.iloc[2:, :]
-                df_mod.to_excel(local_path_mod, index=False)
-
-                # Subir el archivo modificado (sobrescribir)
-                media_mod = MediaFileUpload(local_path_mod, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-                service.files().update(fileId=new_file_id, media_body=media_mod).execute()
-                print(f"Archivo '{habil_filename}' actualizado sin las dos primeras columnas.")
     else:
         print("No se encontraron archivos de Excel o Google Sheets con el patrón 'Rescates de hoy dd-mm-yyyy' (con o sin .xlsx).")
         
