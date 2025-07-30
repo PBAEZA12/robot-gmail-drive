@@ -118,7 +118,7 @@ if __name__ == '__main__':
         if archivo_reciente is None:
             print(f"No se encontró archivo para el último día hábil en Chile: {ultimo_habil.strftime('%d-%m-%Y')}")
         else:
-            print(f"El archivo más reciente es: {archivo_reciente['name']}")
+            print(f"Archivo encontrado para el último día hábil ({fecha_reciente.strftime('%d-%m-%Y')}): {archivo_reciente['name']}")
 
             # Descargar el archivo más reciente a un directorio temporal
         with tempfile.TemporaryDirectory() as tmpdirname:
